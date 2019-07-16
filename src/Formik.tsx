@@ -977,14 +977,18 @@ function getValueForCheckbox(
 }
 
 function useEventCallback<T extends (...args: any[]) => any>(
-  fn: T
+  fn: T,
+  dependencies: React.DependencyList
 ): T {
   const ref: any = React.useRef();
 
   // we copy a ref to the callback scoped to the current state/props on each render
   React.useLayoutEffect(() => {
     ref.current = fn;
-  });
-
-  return React.useCallback((...args) => ref.current.apply(void 0, args), []) as T;
+  }, [fn, ...dependencies]);
+  // @ts-ignore
+  return React.useCallback(
+    (...args) => ref.current.apply(void 0, args),
+    []
+  ) as T;
 }

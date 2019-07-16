@@ -960,7 +960,7 @@
         args[_key] = arguments[_key];
       }
 
-      return ref.current.apply(void 0, args);
+      return ref.current && ref.current.apply(void 0, args);
     }, []);
   }
 

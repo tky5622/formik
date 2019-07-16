@@ -986,9 +986,9 @@ function useEventCallback<T extends (...args: any[]) => any>(
   React.useLayoutEffect(() => {
     ref.current = fn;
   }, [fn, ...dependencies]);
-  // @ts-ignore
   return React.useCallback(
-    (...args) => ref.current.apply(void 0, args),
+    // @ts-ignore
+    (...args) => ref.current && ref.current.apply(void 0, args),
     []
   ) as T;
 }

@@ -977,23 +977,14 @@ function getValueForCheckbox(
 }
 
 function useEventCallback<T extends (...args: any[]) => any>(
-  fn: T,
-  dependencies: React.DependencyList
+  fn: T
 ): T {
-  const ref: any = React.useRef(() => {
-    throw new Error('Cannot call an event handler while rendering.');
+  const ref: any = React.useRef();
+
+  // we copy a ref to the callback scoped to the current state/props on each render
+  React.useLayoutEffect(() => {
+    ref.current = fn;
   });
 
-  React.useEffect(() => {
-    ref.current = fn;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fn, ...dependencies]);
-
-  return React.useCallback<any>(
-    (...argz: any[]) => {
-      const fn = ref.current;
-      return fn(...argz);
-    },
-    [ref]
-  ) as T;
+  return React.useCallback((...args) => ref.current.apply(void 0, args), []) as T;
 }
